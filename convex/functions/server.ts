@@ -39,9 +39,19 @@ export const members = authenticatedQuery({
       .withIndex("by_serverId", (q) => q.eq("serverId", serverId))
       .collect();
     const users = await Promise.all(
-      members.map((member) => ctx.db.get(member.userId))
+      members.map(async (member) => {
+        const user = await ctx.db.get(member.userId);
+        if (!user) {
+          return null;
+        }
+        return {
+          ...user,
+          audioEnabled: member.audioEnabled,
+          videoEnabled: member.videoEnabled,
+        };
+      })
     );
-    return users.filter((result) => result !== null);
+    return users.filter((user) => user !== null);
   },
 });
 
@@ -128,13 +138,14 @@ export const assertServerMember = async (
   ctx: AuthenticatedQueryCtx,
   serverId: Id<"servers">
 ) => {
-  const isMember = await ctx.db
+  const member = await ctx.db
     .query("serverMembers")
     .withIndex("by_serverId_userId", (q) =>
       q.eq("serverId", serverId).eq("userId", ctx.user._id)
     )
     .unique();
-  if (!isMember) {
+  if (!member) {
     throw new Error("You are not a member of this server");
   }
+  return member;
 };

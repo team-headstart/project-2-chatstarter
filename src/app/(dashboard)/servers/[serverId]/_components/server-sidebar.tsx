@@ -1,6 +1,7 @@
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -18,6 +19,7 @@ import { toast } from "sonner";
 import { api } from "../../../../../../convex/_generated/api";
 import { Id } from "../../../../../../convex/_generated/dataModel";
 import { NewChannel } from "./new-channel";
+import { Voice } from "./voice";
 
 export function ServerSidebar({ serverId }: { serverId: Id<"servers"> }) {
   const user = useQuery(api.functions.user.get);
@@ -78,6 +80,7 @@ export function ServerSidebar({ serverId }: { serverId: Id<"servers"> }) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <Voice serverId={serverId} />
     </Sidebar>
   );
 }

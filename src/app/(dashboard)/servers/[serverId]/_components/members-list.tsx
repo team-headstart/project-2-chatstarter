@@ -3,6 +3,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../../../../../convex/_generated/api";
 import { Id } from "../../../../../../convex/_generated/dataModel";
 import { NewInvite } from "./new-invite";
+import { MicIcon, VideoIcon } from "lucide-react";
 
 export function MembersList({ serverId }: { serverId: Id<"servers"> }) {
   const members = useQuery(api.functions.server.members, {
@@ -15,12 +16,16 @@ export function MembersList({ serverId }: { serverId: Id<"servers"> }) {
           key={member._id}
           className="flex items-center justify-between p-2.5 gap-2.5"
         >
-          <div className="flex items-center gap-2 5">
+          <div className="flex items-center gap-2.5">
             <Avatar className="size-8 border">
               <AvatarImage src={member.image} />
               <AvatarFallback />
             </Avatar>
             <p className="text-sm font-medium">{member.username}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            {member.audioEnabled && <MicIcon className="size-4" />}
+            {member.videoEnabled && <VideoIcon className="size-4" />}
           </div>
         </div>
       ))}

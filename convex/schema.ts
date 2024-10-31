@@ -35,6 +35,8 @@ export default defineSchema({
   serverMembers: defineTable({
     serverId: v.id("servers"),
     userId: v.id("users"),
+    audioEnabled: v.optional(v.boolean()),
+    videoEnabled: v.optional(v.boolean()),
   })
     .index("by_serverId", ["serverId"])
     .index("by_serverId_userId", ["serverId", "userId"])
