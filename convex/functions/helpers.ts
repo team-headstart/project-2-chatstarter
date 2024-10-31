@@ -4,7 +4,13 @@ import {
   customQuery,
 } from "convex-helpers/server/customFunctions";
 import { getCurrentUser } from "./user";
-import { mutation, query } from "../_generated/server";
+import { mutation, query, QueryCtx } from "../_generated/server";
+import { Doc, Id } from "../_generated/dataModel";
+import { assertServerMember } from "./server";
+
+export interface AuthenticatedQueryCtx extends QueryCtx {
+  user: Doc<"users">;
+}
 
 export const authenticatedQuery = customQuery(
   query,
@@ -27,3 +33,15 @@ export const authenticatedMutation = customMutation(
     return { user };
   })
 );
+
+export const assertChannelMember = async (
+  ctx: AuthenticatedQueryCtx,
+  channelId: Id<"channels" | "directMessages">
+) => {
+  const channel = await ctx.db.get(channelId);
+  if (!channel) {
+    throw new Error("Channel not found");
+  } else if ("serverId" in channel) {
+    await assertServerMember(ctx, channel.serverId);
+  }
+};
