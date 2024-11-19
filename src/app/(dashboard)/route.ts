@@ -1,4 +1,4 @@
 export function GET(request: Request) {
-  const url = new URL("/dms", request.url);
+  const url = request.url;
   return Response.redirect(url);
 }
