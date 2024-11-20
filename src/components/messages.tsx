@@ -101,7 +101,6 @@ function MessageActions({ message }: { message: Message }) {
       <DropdownMenuContent>
         <DropdownMenuItem
           className="text-destructive"
-          onClick={() => removeMutation({ id: message._id })}
         >
           <TrashIcon />
           Delete
@@ -115,12 +114,11 @@ function MessageInput({ id }: { id: Id<"directMessages" | "channels"> }) {
   const [content, setContent] = useState("");
   const sendMessage = useMutation(api.functions.message.create);
   const sendTypingIndicator = useMutation(api.functions.typing.upsert);
-  const imageUpload = useImageUpload();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await sendMessage({
+      sendMessage({
         dmOrChannelId: id,
         attachment: imageUpload.storageId,
         content,
@@ -159,10 +157,6 @@ function MessageInput({ id }: { id: Id<"directMessages" | "channels"> }) {
             placeholder="Message"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            onKeyDown={() => {
-              if (content.length > 0) {
-                sendTypingIndicator({ dmOrChannelId: id });
-              }
             }}
           />
         </div>
