@@ -44,10 +44,6 @@ export function Messages({ id }: { id: Id<"directMessages" | "channels"> }) {
 function TypingIndicator({ id }: { id: Id<"directMessages" | "channels"> }) {
   const usernames = useQuery(api.functions.typing.list, { dmOrChannelId: id });
 
-  if (!usernames || usernames.length === 0) {
-    return null;
-  }
-
   return (
     <div className="text-sm text-muted-foreground px-4 py-2">
       {usernames.join(", ")} is typing...
@@ -66,7 +62,7 @@ function MessageItem({ message }: { message: Message }) {
       </Avatar>
       <div className="flex flex-col mr-auto">
         <p className="text-xs text-muted-foreground">
-          {message.sender?.username ?? "Deleted User"}
+          {message.sender.username}
         </p>
         <p className="text-sm">{message.content}</p>
         {message.attachment && (
@@ -120,7 +116,7 @@ function MessageInput({ id }: { id: Id<"directMessages" | "channels"> }) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await sendMessage({
+      sendMessage({
         dmOrChannelId: id,
         attachment: imageUpload.storageId,
         content,
@@ -130,7 +126,7 @@ function MessageInput({ id }: { id: Id<"directMessages" | "channels"> }) {
     } catch (error) {
       toast.error("Failed to send message", {
         description:
-          error instanceof Error ? error.message : "An unknown error occurred",
+          error instanceof Error,
       });
     }
   };
@@ -178,7 +174,6 @@ function MessageInput({ id }: { id: Id<"directMessages" | "channels"> }) {
 
 function ImagePreview({
   url,
-  isUploading,
 }: {
   url: string;
   isUploading: boolean;
